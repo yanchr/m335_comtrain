@@ -3,36 +3,34 @@ package ch.zli.m335.comtrain;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
-public class MainActivity extends AppCompatActivity {
+public class StepCoutnerActivity extends AppCompatActivity {
 
+    Intent startMainActivity;
     Intent startPushUpActivity;
-    Intent startStepCounterActivity;
     Intent startWorkoutActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_step_coutner);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        startMainActivity = new Intent(this, MainActivity.class);
         startPushUpActivity = new Intent(this, PushUpActivity.class);
-        startStepCounterActivity = new Intent(this, StepCoutnerActivity.class);
         startWorkoutActivity = new Intent(this, WorkoutActivity.class);
 
+        ImageView MainSvg = findViewById(R.id.MainToMain);
         ImageView PushUpSvg = findViewById(R.id.MainToPushUp);
-        ImageView StepCounterSvg = findViewById(R.id.MainToStepCounter);
         ImageView WorkoutSvg = findViewById(R.id.MainToWorkout);
 
+        MainSvg.setOnClickListener(v -> changeActivities(startMainActivity));
         PushUpSvg.setOnClickListener(v -> changeActivities(startPushUpActivity));
-        StepCounterSvg.setOnClickListener(v -> changeActivities(startStepCounterActivity));
         WorkoutSvg.setOnClickListener(v -> changeActivities(startWorkoutActivity));
     }
 
@@ -40,5 +38,4 @@ public class MainActivity extends AppCompatActivity {
         startActivity(startactivity);
         finish();
     }
-
 }

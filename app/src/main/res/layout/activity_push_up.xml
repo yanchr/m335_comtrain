@@ -4,20 +4,64 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="#1565C0"
+    tools:context=".PushUpActivity">
 
     <TextView
-        android:id="@+id/titleMain"
+        android:id="@+id/titlePushUp"
         android:layout_width="match_parent"
         android:layout_height="112dp"
-        android:background="#1565C0"
+        android:background="#FFFFFF"
         android:gravity="center"
-        android:text="Welcome to Comtrain"
+        android:text="Push up counter"
         android:textAlignment="center"
-        android:textColor="#FFFFFF"
+        android:textColor="#000000"
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/controlButtonsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="70dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/stepCounterView">
+
+        <TextView
+            android:id="@+id/placeholderLeft"
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/resetCounterBtn"
+            android:layout_width="121dp"
+            android:layout_height="58dp"
+            android:layout_weight="1"
+            android:text="Reset" />
+
+        <TextView
+            android:id="@+id/PlaceholderMiddle"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/pauseCounterBtn"
+            android:layout_width="121dp"
+            android:layout_height="58dp"
+            android:layout_weight="1"
+            android:text="Pause" />
+
+        <TextView
+            android:id="@+id/placeholderRight"
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/footerWorkout"
@@ -60,5 +104,4 @@
             android:layout_weight="1"
             app:srcCompat="@drawable/to_pushup_svg" />
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
