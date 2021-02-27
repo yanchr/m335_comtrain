@@ -28,6 +28,7 @@
             android:layout_width="121dp"
             android:layout_height="58dp"
             android:layout_weight="1"
+            android:background="#000000"
             android:text="Reset" />
 
         <TextView
@@ -41,6 +42,7 @@
             android:layout_width="121dp"
             android:layout_height="58dp"
             android:layout_weight="1"
+            android:background="@android:color/black"
             android:text="Pause" />
 
         <TextView
@@ -104,4 +106,86 @@
             android:layout_weight="1"
             app:srcCompat="@drawable/to_pushup_svg" />
     </LinearLayout>
+
+
+    <Button
+        android:id="@+id/startWorkoutBtn"
+        android:layout_width="121dp"
+        android:layout_height="58dp"
+        android:layout_marginStart="252dp"
+        android:layout_marginTop="100dp"
+        android:background="#040101"
+        android:text="Start"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleWorkout" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/InputExercice"
+        android:layout_width="189dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="50dp"
+        android:background="#BFC0C0"
+        android:hint="@string/exercice"
+        android:textSize="25sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleWorkout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/InputRound"
+        android:layout_width="189dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="158dp"
+        android:background="#BFC0C0"
+        android:hint="@string/round"
+        android:textSize="25sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleWorkout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/exerciceView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="63dp"
+        android:layout_weight="1"
+        android:text="Exercice: 0/0"
+        android:textColor="#FFFFFF"
+        android:textSize="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/InputRound" />
+
+    <TextView
+        android:id="@+id/roundView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="33dp"
+        android:layout_weight="1"
+        android:text="Round: 0/0"
+        android:textColor="#FFFFFF"
+        android:textSize="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/exerciceView" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+

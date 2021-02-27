@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ComTrain</string>
+    <string name="exercice">Exercice</string>
+    <string name="round">Rounds</string>
 </resources>
