@@ -2,15 +2,24 @@ package ch.zli.m335.comtrain;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-public class StepCoutnerActivity extends AppCompatActivity {
+public class StepCoutnerActivity extends AppCompatActivity implements SensorEventListener{
 
     Intent startMainActivity;
     Intent startPushUpActivity;
     Intent startWorkoutActivity;
+
+    private SensorManager sensorManager;
+    private Sensor sensor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +30,8 @@ public class StepCoutnerActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+
         startMainActivity = new Intent(this, MainActivity.class);
         startPushUpActivity = new Intent(this, PushUpActivity.class);
         startWorkoutActivity = new Intent(this, WorkoutActivity.class);
@@ -32,10 +43,32 @@ public class StepCoutnerActivity extends AppCompatActivity {
         MainSvg.setOnClickListener(v -> changeActivities(startMainActivity));
         PushUpSvg.setOnClickListener(v -> changeActivities(startPushUpActivity));
         WorkoutSvg.setOnClickListener(v -> changeActivities(startWorkoutActivity));
+
+        activateStepSensor();
     }
 
-    public void changeActivities(Intent startactivity){
+    public void changeActivities(Intent startactivity) {
         startActivity(startactivity);
         finish();
     }
+
+    public void activateStepSensor() {
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        sensorManager.registerListener((SensorEventListener) this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
+    }
+
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        TextView stepCounter = findViewById(R.id.stepCounterView);
+        stepCounter.setText(String.valueOf(event.values[0]));
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
 }
+
