@@ -119,6 +119,7 @@
         app:layout_constraintTop_toBottomOf="@+id/titleWorkout">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/exerciseInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number" />
@@ -138,37 +139,12 @@
         app:layout_constraintTop_toBottomOf="@+id/titleWorkout">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/roundInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number" />
 
     </com.google.android.material.textfield.TextInputLayout>
-
-    <TextView
-        android:id="@+id/exerciceView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="63dp"
-        android:layout_weight="1"
-        android:text="Exercise: 0/0"
-        android:textColor="#FFFFFF"
-        android:textSize="30dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/InputRound" />
-
-    <TextView
-        android:id="@+id/roundView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="33dp"
-        android:layout_weight="1"
-        android:text="Round: 0/0"
-        android:textColor="#FFFFFF"
-        android:textSize="30dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/exerciceView" />
 
     <Button
         android:id="@+id/startWorkoutBtn"
@@ -179,6 +155,101 @@
         android:text="Start"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleWorkout" />
+
+    <LinearLayout
+        android:id="@+id/exerciseLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/InputRound">
+
+        <TextView
+            android:id="@+id/exerciceView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text=" Exercise: "
+            android:textColor="#FFFFFF"
+            android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/exerciseWork"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="0"
+            android:textColor="#FFFFFF"
+            android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/exerciseDivider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="/"
+            android:textColor="#FFFFFF"
+            android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/exerciseGoal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="0"
+            android:textColor="#FFFFFF"
+            android:textSize="30dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/roundLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="300dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleWorkout">
+
+        <TextView
+            android:id="@+id/roundView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Round: "
+            android:textColor="#FFFFFF"
+            android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/roundWork"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="0"
+            android:textColor="#FFFFFF"
+            android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/roundDivider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="/"
+            android:textColor="#FFFFFF"
+            android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/roundGoal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="0"
+            android:textColor="#FFFFFF"
+            android:textSize="30dp" />
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
