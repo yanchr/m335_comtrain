@@ -2,6 +2,7 @@ package ch.zli.m335.comtrain;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -82,24 +83,27 @@ public class PushUpActivity extends AppCompatActivity implements SensorEventList
 
     public void activateLightSensor() {
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         sensorManager.registerListener((SensorEventListener) this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onSensorChanged(SensorEvent event) {
         TextView pushUpCounterView = findViewById(R.id.pushupCounterView);
         Button downCalibratorBtn = findViewById(R.id.downCalibratorBtn);
         Button upCalibratorBtn = findViewById(R.id.upCalibratorBtn);
         TextView lightNumberView = findViewById(R.id.lightNumberView);
-        lightNumberView.setText(toString(event.values[0]));
+
+        lightNumberView.setText(toString(event.values[0]) + " cm");
+
         downCalibratorBtn.setOnClickListener(v -> {
-            downCalibratorBtn.setText(toString(event.values[0]));
+            downCalibratorBtn.setText(toString(event.values[0]) + " cm");
             downLightNumber = event.values[0];
         });
         upCalibratorBtn.setOnClickListener(v -> {
-            upCalibratorBtn.setText(toString(event.values[0]));
+            upCalibratorBtn.setText(toString(event.values[0]) + " cm");
             upLightNumber = event.values[0];
         });
 
@@ -153,7 +157,7 @@ public class PushUpActivity extends AppCompatActivity implements SensorEventList
     protected void onResume() {
         super.onResume();
         sensorManager.registerListener(this, sensor,
-                sensorManager.SENSOR_DELAY_UI);
+                SensorManager.SENSOR_DELAY_UI);
     }
 
     // Unregister listener
