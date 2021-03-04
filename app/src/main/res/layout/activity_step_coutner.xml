@@ -48,7 +48,7 @@
             android:layout_weight="1" />
 
         <Button
-            android:id="@+id/resetCounterBtn"
+            android:id="@+id/pushUpResetCounterBtn"
             android:layout_width="121dp"
             android:layout_height="58dp"
             android:layout_weight="1"
