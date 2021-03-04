@@ -1,10 +1,12 @@
 package ch.zli.m335.comtrain;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -17,7 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class PushUpActivity extends AppCompatActivity implements SensorEventListener {
+public class PushUpActivity extends MyActivty implements SensorEventListener {
 
     Intent startMainActivity;
     Intent startStepCounterActivity;
@@ -33,11 +35,31 @@ public class PushUpActivity extends AppCompatActivity implements SensorEventList
     boolean isPaused = false;
 
     int highscore = 0;
+    TextView highscoreView;
+
+
+    private static final String COUNTER_STATE = "counter";
+    private SharedPreferences preferences;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_push_up);
+
+        this.highscoreView = findViewById(R.id.highscoreView);
+        this.preferences = getPreferences(MODE_PRIVATE);
+
+        // Preserve UI state
+        if(savedInstanceState != null && savedInstanceState.containsKey(COUNTER_STATE)) {
+            this.highscore = savedInstanceState.getInt(COUNTER_STATE);
+        } else {
+            // Restore saved application data
+            this.highscore = preferences.getInt(COUNTER_STATE, this.highscore);
+        }
+
+        renderHighscore();
     }
 
     @Override
@@ -78,9 +100,16 @@ public class PushUpActivity extends AppCompatActivity implements SensorEventList
         });
     }
 
-    public void changeActivities(Intent startactivity) {
-        startActivity(startactivity);
-        finish();
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt(COUNTER_STATE, this.highscore);
+        super.onSaveInstanceState(outState);
+    }
+
+    private void saveHighScore() {
+        SharedPreferences.Editor preferencesEditor = this.preferences.edit();
+        preferencesEditor.putInt(COUNTER_STATE, this.highscore);
+        preferencesEditor.apply();
     }
 
     public void activateLightSensor() {
@@ -120,6 +149,7 @@ public class PushUpActivity extends AppCompatActivity implements SensorEventList
                 TextView highscoreView = findViewById(R.id.highscoreView);
                 highscore = pushUps;
                 highscoreView.setText("High score: " + toString(highscore));
+                saveHighScore();
             }
         }
 
@@ -160,11 +190,6 @@ public class PushUpActivity extends AppCompatActivity implements SensorEventList
         });
 
     }
-
-    public String toString(Object number) {
-        return String.valueOf(number);
-    }
-
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
@@ -182,6 +207,14 @@ public class PushUpActivity extends AppCompatActivity implements SensorEventList
     protected void onPause() {
         sensorManager.unregisterListener(this);
         super.onPause();
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void renderHighscore() {
+        if (this.highscoreView != null) {
+            this.highscoreView.setText("Highscore: " + String.valueOf(this.highscore));
+            saveHighScore();
+        }
     }
 
 }
