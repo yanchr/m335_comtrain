@@ -32,6 +32,8 @@ public class PushUpActivity extends AppCompatActivity implements SensorEventList
     boolean wasDown = false;
     boolean isPaused = false;
 
+    int highscore = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +116,11 @@ public class PushUpActivity extends AppCompatActivity implements SensorEventList
             wasDown = false;
             pushUps++;
             pushUpCounterView.setText(toString(pushUps));
+            if (pushUps > highscore) {
+                TextView highscoreView = findViewById(R.id.highscoreView);
+                highscore = pushUps;
+                highscoreView.setText("High score: " + toString(highscore));
+            }
         }
 
     }
@@ -121,12 +128,22 @@ public class PushUpActivity extends AppCompatActivity implements SensorEventList
     public void enableResetBtnListener() {
         Button resetBtn = findViewById(R.id.pushUpResetCounterBtn);
         TextView counterView = findViewById(R.id.pushupCounterView);
+        TextView hightscoreView = findViewById(R.id.highscoreView);
 
         resetBtn.setOnClickListener(v -> {
-            pushUps = 0;
-            counterView.setText(toString(pushUps));
-
+            pushUps = resetCounter(counterView);
         });
+
+        resetBtn.setOnLongClickListener(v -> {
+            pushUps = resetCounter(counterView);
+            highscore = resetCounter(hightscoreView);
+            return false;
+        });
+    }
+
+    public int resetCounter(TextView counterView){
+        counterView.setText(toString(0));
+        return 0;
     }
 
     public void enablePauseBtnListener() {
