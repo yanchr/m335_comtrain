@@ -83,8 +83,8 @@ public class PushUpActivity extends AppCompatActivity implements SensorEventList
 
     public void activateLightSensor() {
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-        sensorManager.registerListener((SensorEventListener) this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        sensorManager.registerListener((SensorEventListener) this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
 
@@ -96,21 +96,21 @@ public class PushUpActivity extends AppCompatActivity implements SensorEventList
         Button upCalibratorBtn = findViewById(R.id.upCalibratorBtn);
         TextView lightNumberView = findViewById(R.id.lightNumberView);
 
-        lightNumberView.setText(toString(event.values[0]) + " cm");
+        lightNumberView.setText(toString(event.values[0]));
 
         downCalibratorBtn.setOnClickListener(v -> {
-            downCalibratorBtn.setText(toString(event.values[0]) + " cm");
+            downCalibratorBtn.setText(toString(event.values[0]));
             downLightNumber = event.values[0];
         });
         upCalibratorBtn.setOnClickListener(v -> {
-            upCalibratorBtn.setText(toString(event.values[0]) + " cm");
+            upCalibratorBtn.setText(toString(event.values[0]));
             upLightNumber = event.values[0];
         });
 
-        if (event.values[0] <= downLightNumber) {
+        if (event.values[0] < downLightNumber) {
             wasDown = true;
         }
-        if (event.values[0] >= upLightNumber && wasDown) {
+        if (event.values[0] > upLightNumber && wasDown) {
             wasDown = false;
             pushUps++;
             pushUpCounterView.setText(toString(pushUps));
