@@ -75,7 +75,6 @@ public class PushUpActivity extends MyActivty implements SensorEventListener {
         saveHighScore();
     }
 
-
     public void activateLightSensor() {
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
@@ -154,9 +153,25 @@ public class PushUpActivity extends MyActivty implements SensorEventListener {
         resetBtn.setOnLongClickListener(v -> {
             pushUps = resetCounter(pushUpCounterView);
             highscore = resetCounter(highscoreView);
+            saveHighScore();
             return false;
         });
     }
+
+    public void enablePauseBtnListener() {
+        pauseBtn.setOnClickListener(v -> {
+            isPaused = !isPaused;
+            if (!isPaused) {
+                onPause();
+                pauseBtn.setText("UNPAUSE");
+            } else{
+                onResume();
+                pauseBtn.setText("PAUSE");
+            }
+        });
+
+    }
+
 
     protected void enableCalibratorBtnListener(){
         upCalibratorBtn.setVisibility(View.INVISIBLE);
@@ -174,20 +189,6 @@ public class PushUpActivity extends MyActivty implements SensorEventListener {
     }
 
 
-
-    public void enablePauseBtnListener() {
-        pauseBtn.setOnClickListener(v -> {
-            isPaused = !isPaused;
-            if (!isPaused) {
-                onPause();
-                pauseBtn.setText("UNPAUSE");
-            } else{
-                onResume();
-                pauseBtn.setText("PAUSE");
-            }
-        });
-
-    }
 
 
 

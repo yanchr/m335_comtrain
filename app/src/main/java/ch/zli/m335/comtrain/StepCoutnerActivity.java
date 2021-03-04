@@ -15,12 +15,13 @@ import android.widget.TextView;
 
 public class StepCoutnerActivity extends MyActivty implements SensorEventListener{
 
-    Intent startMainActivity;
-    Intent startPushUpActivity;
-    Intent startWorkoutActivity;
-
     private SensorManager sensorManager;
     private Sensor sensor;
+
+    Button shakerBtn;
+    Button resetBtn;
+    Button pauseBtn;
+    TextView stepCounterView;
 
     private int stepCounterInt = 0;
 
@@ -29,8 +30,19 @@ public class StepCoutnerActivity extends MyActivty implements SensorEventListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step_coutner);
 
-        Button shaker = findViewById(R.id.shakerBtn);
-        shaker.setOnClickListener(v -> {
+       shakerBtn = findViewById(R.id.shakerBtn);
+       stepCounterView = findViewById(R.id.stepCounterView);
+       pauseBtn = findViewById(R.id.stepCounterPauseBtn);
+       resetBtn = findViewById(R.id.stepCounterResetBtn);
+
+       activateStepSensor();
+       createNavigation();
+       enableResetBtnListener();
+       enablePauseBtnListener();
+
+
+
+        shakerBtn.setOnClickListener(v -> {
             shakePhone();
         });
     }
@@ -38,26 +50,6 @@ public class StepCoutnerActivity extends MyActivty implements SensorEventListene
     @Override
     protected void onStart() {
         super.onStart();
-
-
-        startMainActivity = new Intent(this, MainActivity.class);
-        startPushUpActivity = new Intent(this, PushUpActivity.class);
-        startWorkoutActivity = new Intent(this, WorkoutActivity.class);
-
-        ImageView MainSvg = findViewById(R.id.MainToMain);
-        ImageView PushUpSvg = findViewById(R.id.MainToPushUp);
-        ImageView WorkoutSvg = findViewById(R.id.MainToWorkout);
-
-        MainSvg.setOnClickListener(v -> changeActivities(startMainActivity));
-        PushUpSvg.setOnClickListener(v -> changeActivities(startPushUpActivity));
-        WorkoutSvg.setOnClickListener(v -> changeActivities(startWorkoutActivity));
-
-        activateStepSensor();
-    }
-
-    public void changeActivities(Intent startactivity) {
-        startActivity(startactivity);
-        finish();
     }
 
     public void activateStepSensor() {
@@ -66,23 +58,55 @@ public class StepCoutnerActivity extends MyActivty implements SensorEventListene
         sensorManager.registerListener((SensorEventListener) this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
-
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (sensor.getType() == Sensor.TYPE_STEP_COUNTER){
-            TextView stepCounter = findViewById(R.id.stepCounterView);
+
             stepCounterInt++;
-            stepCounter.setText(toString(stepCounterInt));
+            stepCounterView.setText(toString(stepCounterInt));
         }
     }
-
-
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
+    // Register listener
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(this, sensor,
+                SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    // Unregister listener
+    @Override
+    protected void onPause() {
+        sensorManager.unregisterListener(this);
+        super.onPause();
+    }
+
     public void shakePhone() {
+    }
+
+    public void enableResetBtnListener() {
+        resetBtn.setOnClickListener(v -> {
+            stepCounterInt = resetCounter(stepCounterView);
+        });
+    }
+
+    public void enablePauseBtnListener() {
+        pauseBtn.setOnClickListener(v -> {
+            isPaused = !isPaused;
+            if (!isPaused) {
+                onPause();
+                pauseBtn.setText("UNPAUSE");
+            } else{
+                onResume();
+                pauseBtn.setText("PAUSE");
+            }
+        });
+
     }
 }
 
