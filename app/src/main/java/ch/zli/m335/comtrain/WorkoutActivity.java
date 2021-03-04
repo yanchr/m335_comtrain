@@ -19,6 +19,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import org.w3c.dom.Text;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class WorkoutActivity extends AppCompatActivity{
 
@@ -215,6 +216,13 @@ public class WorkoutActivity extends AppCompatActivity{
         }
         if (exerciseWorkInt >= 0){
             exerciseWork.setText(toString(exerciseWorkInt));
+            try {
+                onPause();
+                TimeUnit.SECONDS.sleep(1);
+                onResume();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         if (exerciseWorkInt == textViewtoInt(exerciseGoal) && textViewtoInt(exerciseGoal) != 0){
             roundWorkInt++;

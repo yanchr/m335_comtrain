@@ -9,6 +9,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,10 +22,17 @@ public class StepCoutnerActivity extends AppCompatActivity implements SensorEven
     private SensorManager sensorManager;
     private Sensor sensor;
 
+    private int stepCounterInt = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step_coutner);
+
+        Button shaker = findViewById(R.id.shakerBtn);
+        shaker.setOnClickListener(v -> {
+            shakePhone();
+        });
     }
 
     @Override
@@ -61,14 +69,24 @@ public class StepCoutnerActivity extends AppCompatActivity implements SensorEven
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        TextView stepCounter = findViewById(R.id.stepCounterView);
-        stepCounter.setText(String.valueOf(event.values[0]));
-
+        if (sensor.getType() == Sensor.TYPE_STEP_COUNTER){
+            TextView stepCounter = findViewById(R.id.stepCounterView);
+            stepCounterInt++;
+            stepCounter.setText(toString(stepCounterInt));
+        }
     }
+
+
+    public String toString(Object number) {
+        return String.valueOf(number);
+    }
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
 
+    public void shakePhone() {
     }
 }
 
