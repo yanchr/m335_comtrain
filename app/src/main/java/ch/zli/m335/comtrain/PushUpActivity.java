@@ -19,28 +19,35 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 public class PushUpActivity extends MyActivty implements SensorEventListener {
 
-    Intent startMainActivity;
-    Intent startStepCounterActivity;
-    Intent startWorkoutActivity;
+    public Intent startMainActivity;
+    public Intent startStepCounterActivity;
+    public Intent startWorkoutActivity;
 
-    SensorManager sensorManager;
-    Sensor sensor;
+    public SensorManager sensorManager;
+    public Sensor sensor;
 
-    double downLightNumber;
-    double upLightNumber;
-    int pushUps;
-    boolean wasDown = false;
-    boolean isPaused = false;
+    public ImageView MainSvg;
+    public ImageView StepCounterSvg ;
+    public ImageView WorkoutSvg;
+    public Button calibratorBtn;
+    public Button upCalibratorBtn;
+    public Button resetBtn;
+    public Button downCalibratorBtn;
+    public TextView pushUpCounterView;
+    public TextView lightNumberView;
+    public TextView highscoreView;
 
-    int highscore = 0;
-    TextView highscoreView;
-
-
+    public double downLightNumber;
+    public double upLightNumber;
+    public int pushUps;
+    public boolean wasDown = false;
+    public int highscore = 0;
     private static final String COUNTER_STATE = "counter";
     private SharedPreferences preferences;
-
 
 
     @Override
@@ -48,8 +55,24 @@ public class PushUpActivity extends MyActivty implements SensorEventListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_push_up);
 
+        startMainActivity = new Intent(this, MainActivity.class);
+        startStepCounterActivity = new Intent(this, StepCoutnerActivity.class);
+        startWorkoutActivity = new Intent(this, WorkoutActivity.class);
+
+        this.MainSvg = findViewById(R.id.MainToMain);
+        this.StepCounterSvg = findViewById(R.id.MainToStepCounter);
+        this.WorkoutSvg = findViewById(R.id.MainToWorkout);
+        this.pushUpCounterView = findViewById(R.id.pushUpCounterView);
+        this.downCalibratorBtn = findViewById(R.id.downCalibratorBtn);
+        this.upCalibratorBtn = findViewById(R.id.upCalibratorBtn);
+        this.calibratorBtn = findViewById(R.id.calibratorBtn);
+        this.resetBtn = findViewById(R.id.pushUpResetCounterBtn);
+        this.lightNumberView = findViewById(R.id.lightNumberView);
         this.highscoreView = findViewById(R.id.highscoreView);
         this.preferences = getPreferences(MODE_PRIVATE);
+
+        activateLightSensor();
+
 
         // Preserve UI state
         if(savedInstanceState != null && savedInstanceState.containsKey(COUNTER_STATE)) {
@@ -59,32 +82,19 @@ public class PushUpActivity extends MyActivty implements SensorEventListener {
             this.highscore = preferences.getInt(COUNTER_STATE, this.highscore);
         }
 
-        renderHighscore();
+        renderTextView(this.highscoreView,toString(this.highscore));
+        saveHighScore();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        startMainActivity = new Intent(this, MainActivity.class);
-        startStepCounterActivity = new Intent(this, StepCoutnerActivity.class);
-        startWorkoutActivity = new Intent(this, WorkoutActivity.class);
-
-        activateLightSensor();
         enableResetBtnListener();
         enablePauseBtnListener();
-
-
-        ImageView MainSvg = findViewById(R.id.MainToMain);
-        ImageView StepCounterSvg = findViewById(R.id.MainToStepCounter);
-        ImageView WorkoutSvg = findViewById(R.id.MainToWorkout);
 
         MainSvg.setOnClickListener(v -> changeActivities(startMainActivity));
         StepCounterSvg.setOnClickListener(v -> changeActivities(startStepCounterActivity));
         WorkoutSvg.setOnClickListener(v -> changeActivities(startWorkoutActivity));
-
-        Button calibratorBtn = findViewById(R.id.calibratorBtn);
-        Button upCalibratorBtn = findViewById(R.id.upCalibratorBtn);
-        Button downCalibratorBtn = findViewById(R.id.downCalibratorBtn);
 
         upCalibratorBtn.setVisibility(View.INVISIBLE);
         downCalibratorBtn.setVisibility(View.INVISIBLE);
@@ -100,33 +110,15 @@ public class PushUpActivity extends MyActivty implements SensorEventListener {
         });
     }
 
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putInt(COUNTER_STATE, this.highscore);
-        super.onSaveInstanceState(outState);
-    }
-
-    private void saveHighScore() {
-        SharedPreferences.Editor preferencesEditor = this.preferences.edit();
-        preferencesEditor.putInt(COUNTER_STATE, this.highscore);
-        preferencesEditor.apply();
-    }
-
     public void activateLightSensor() {
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         sensorManager.registerListener((SensorEventListener) this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-
     @SuppressLint("SetTextI18n")
     @Override
     public void onSensorChanged(SensorEvent event) {
-        TextView pushUpCounterView = findViewById(R.id.pushupCounterView);
-        Button downCalibratorBtn = findViewById(R.id.downCalibratorBtn);
-        Button upCalibratorBtn = findViewById(R.id.upCalibratorBtn);
-        TextView lightNumberView = findViewById(R.id.lightNumberView);
-
         lightNumberView.setText(toString(event.values[0]));
 
         downCalibratorBtn.setOnClickListener(v -> {
@@ -148,50 +140,16 @@ public class PushUpActivity extends MyActivty implements SensorEventListener {
             if (pushUps > highscore) {
                 TextView highscoreView = findViewById(R.id.highscoreView);
                 highscore = pushUps;
-                highscoreView.setText("High score: " + toString(highscore));
+                highscoreView.setText(toString(highscore));
                 saveHighScore();
             }
         }
 
     }
 
-    public void enableResetBtnListener() {
-        Button resetBtn = findViewById(R.id.pushUpResetCounterBtn);
-        TextView counterView = findViewById(R.id.pushupCounterView);
-        TextView hightscoreView = findViewById(R.id.highscoreView);
-
-        resetBtn.setOnClickListener(v -> {
-            pushUps = resetCounter(counterView);
-        });
-
-        resetBtn.setOnLongClickListener(v -> {
-            pushUps = resetCounter(counterView);
-            highscore = resetCounter(hightscoreView);
-            return false;
-        });
-    }
-
-    public int resetCounter(TextView counterView){
-        counterView.setText(toString(0));
-        return 0;
-    }
-
-    public void enablePauseBtnListener() {
-        Button pauseBtn = findViewById(R.id.pauseCounterBtn);
-        pauseBtn.setOnClickListener(v -> {
-            isPaused = !isPaused;
-            if (!isPaused) {
-                onPause();
-                pauseBtn.setText("UNPAUSE");
-            } else{
-                onResume();
-                pauseBtn.setText("PAUSE");
-            }
-        });
-
-    }
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 
     // Register listener
@@ -209,12 +167,28 @@ public class PushUpActivity extends MyActivty implements SensorEventListener {
         super.onPause();
     }
 
-    @SuppressLint("SetTextI18n")
-    private void renderHighscore() {
-        if (this.highscoreView != null) {
-            this.highscoreView.setText("Highscore: " + String.valueOf(this.highscore));
-            saveHighScore();
-        }
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt(COUNTER_STATE, this.highscore);
+        super.onSaveInstanceState(outState);
+    }
+
+    private void saveHighScore() {
+        SharedPreferences.Editor preferencesEditor = this.preferences.edit();
+        preferencesEditor.putInt(COUNTER_STATE, this.highscore);
+        preferencesEditor.apply();
+    }
+
+    public void enableResetBtnListener() {
+        resetBtn.setOnClickListener(v -> {
+            pushUps = resetCounter(pushUpCounterView);
+        });
+
+        resetBtn.setOnLongClickListener(v -> {
+            pushUps = resetCounter(pushUpCounterView);
+            highscore = resetCounter(highscoreView);
+            return false;
+        });
     }
 
 }
