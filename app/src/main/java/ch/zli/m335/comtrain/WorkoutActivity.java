@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
@@ -35,12 +37,19 @@ public class WorkoutActivity extends MyActivty{
 
     private final int exerciseDefaultGoal = 3;
     private final int roundDefaultGoal = 6;
-    private int exerciseWorkInt = -11;
+    private int exerciseWorkInt = 0;
     private int roundWorkInt = 0;
+    private int exerciseGoalInt = 0;
+    private int roundGoalInt = 0;
 
+    private int preshaker = -11;
+
+    private static final String EXERCISE_WORK_STATE = "exerciseWork";
+    private static final String EXERCISE_GOAL_STATE = "exerciseGoal";
+    private static final String ROUND_WORK_STATE = "roundWork";
+    private static final String ROUND_GOAL_STATE = "roundGoal";
 
     private boolean isPaused;
-
 
 
     @Override
@@ -64,12 +73,38 @@ public class WorkoutActivity extends MyActivty{
         roundWorkView = findViewById(R.id.roundWork);
         exerciseGoalView = findViewById(R.id.exerciseGoal);
         roundGoalView = findViewById(R.id.roundGoal);
+        preferences = getPreferences(MODE_PRIVATE);
+
 
         createNavigation();
         enableResetBtnListener();
         enablePauseBtnListener();
 
-        enableStartBtnListener(exerciseGoalView, roundGoalView);
+        enableStartBtnListener();
+
+        // Preserve UI state
+        if (savedInstanceState != null && savedInstanceState.containsKey(EXERCISE_WORK_STATE)) {
+            this.exerciseWorkInt = savedInstanceState.getInt(EXERCISE_WORK_STATE);
+            this.exerciseGoalInt = savedInstanceState.getInt(EXERCISE_GOAL_STATE);
+            this.roundWorkInt = savedInstanceState.getInt(ROUND_WORK_STATE);
+            this.roundGoalInt = savedInstanceState.getInt(ROUND_GOAL_STATE);
+        } else {
+            // Restore saved application data
+            this.exerciseWorkInt = preferences.getInt(EXERCISE_WORK_STATE, this.exerciseWorkInt);
+            this.exerciseGoalInt = preferences.getInt(EXERCISE_GOAL_STATE, this.exerciseGoalInt);
+            this.roundWorkInt = preferences.getInt(ROUND_WORK_STATE, (int) this.roundWorkInt);
+            this.roundGoalInt = preferences.getInt(ROUND_GOAL_STATE, (int) this.roundGoalInt);
+        }
+
+        renderTextView(this.exerciseWorkView, toString(this.exerciseWorkInt));
+        renderTextView(this.exerciseGoalView, toString(this.exerciseGoalInt));
+        renderTextView(this.roundWorkView, toString(this.roundWorkInt));
+        renderTextView(this.roundGoalView, toString(this.roundGoalInt));
+
+        saveScore(EXERCISE_WORK_STATE, exerciseWorkInt);
+        saveScore(EXERCISE_GOAL_STATE, exerciseGoalInt);
+        saveScore(ROUND_WORK_STATE, (int) roundWorkInt);
+        saveScore(ROUND_GOAL_STATE, (int) roundGoalInt);
 
     }
 
@@ -105,18 +140,32 @@ public class WorkoutActivity extends MyActivty{
         super.onPause();
     }
 
-    public void enableStartBtnListener(TextView exerciseGoalView, TextView roundGoalView){
-           startWorkoutBtn.setOnClickListener(v -> {
-            inputGoal(exerciseGoalView, exerciseInput, exerciseDefaultGoal);
-            inputGoal(roundGoalView, roundInput, roundDefaultGoal);
-        });
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt(EXERCISE_WORK_STATE, this.exerciseWorkInt);
+        outState.putInt(EXERCISE_GOAL_STATE, this.exerciseGoalInt);
+        outState.putInt(ROUND_WORK_STATE, (int) this.roundWorkInt);
+        outState.putInt(ROUND_GOAL_STATE, (int) this.roundGoalInt);
+        super.onSaveInstanceState(outState);
     }
 
-    public void inputGoal(TextView goalView, TextInputEditText goalInput, int defaultInt){
+    public void enableStartBtnListener(){
+           startWorkoutBtn.setOnClickListener(v -> {
+            exerciseGoalInt = inputGoal(exerciseGoalView, exerciseInput, exerciseDefaultGoal);
+            roundGoalInt = inputGoal(roundGoalView, roundInput, roundDefaultGoal);
+               saveScore(EXERCISE_GOAL_STATE, exerciseGoalInt);
+               saveScore(ROUND_GOAL_STATE, roundGoalInt);
+
+           });
+    }
+
+    public int inputGoal(TextView goalView, TextInputEditText goalInput, int defaultInt){
             if (Objects.requireNonNull(goalInput.getText()).length() > 0) {
                 goalView.setText(toString(goalInput.getText()));
+                return textViewtoInt(goalInput);
             } else {
                 goalView.setText(toString(defaultInt));
+                return defaultInt;
             }
     }
 
@@ -124,13 +173,19 @@ public class WorkoutActivity extends MyActivty{
         resetBtn.setOnClickListener(v -> {
             exerciseWorkInt = resetCounter(exerciseWorkView);
             roundWorkInt = resetCounter(roundWorkView);
+            saveScore(ROUND_WORK_STATE, roundWorkInt);
+            saveScore(EXERCISE_WORK_STATE, exerciseWorkInt);
 
         });
         resetBtn.setOnLongClickListener(v -> {
             exerciseWorkInt = resetCounter(exerciseWorkView);
             roundWorkInt = resetCounter(roundWorkView);
-            exerciseGoalView.setText(toString(0));
-            roundGoalView.setText(toString(0));
+            exerciseGoalInt = resetCounter(exerciseGoalView);
+            roundGoalInt = resetCounter(roundGoalView);
+            saveScore(EXERCISE_WORK_STATE, exerciseWorkInt);
+            saveScore(EXERCISE_GOAL_STATE, exerciseGoalInt);
+            saveScore(ROUND_WORK_STATE, roundWorkInt);
+            saveScore(ROUND_GOAL_STATE, roundGoalInt);
             return false;
         });
     }
@@ -142,28 +197,39 @@ public class WorkoutActivity extends MyActivty{
      */
     public void countUpExerciseAndRound() {
 
-       if (textViewtoInt(exerciseGoalView) > 0 || exerciseWorkInt < 0) {
-            exerciseWorkInt++;
-        }
-        if (exerciseWorkInt >= 0){
-            exerciseWorkView.setText(toString(exerciseWorkInt));
-            try {
-                onPause();
-                TimeUnit.SECONDS.sleep(1);
-                onResume();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        if (preshaker < 0){
+            preshaker++;
+        } else {
+            if (textViewtoInt(exerciseGoalView) > 0 || exerciseWorkInt < 0) {
+                exerciseWorkInt++;
             }
-        }
-        if (exerciseWorkInt == textViewtoInt(exerciseGoalView) && textViewtoInt(exerciseGoalView) != 0){
-            roundWorkInt++;
-            roundWorkView.setText(toString(roundWorkInt));
-            exerciseWorkInt = resetCounter(exerciseWorkView);
-            if (roundWorkInt == textViewtoInt(roundGoalView)) {
+            if (exerciseWorkInt >= 0){
+                exerciseWorkView.setText(toString(exerciseWorkInt));
+                saveScore(EXERCISE_WORK_STATE, exerciseWorkInt);
+                try {
+                    onPause();
+                    TimeUnit.SECONDS.sleep(1);
+                    onResume();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (exerciseWorkInt == textViewtoInt(exerciseGoalView) && textViewtoInt(exerciseGoalView) != 0){
+                roundWorkInt++;
+                roundWorkView.setText(toString(roundWorkInt));
+                saveScore(ROUND_WORK_STATE, roundWorkInt);
                 exerciseWorkInt = resetCounter(exerciseWorkView);
-                roundWorkInt = resetCounter(roundWorkView);
+                saveScore(EXERCISE_WORK_STATE, exerciseWorkInt);
+                if (roundWorkInt == textViewtoInt(roundGoalView)) {
+                    exerciseWorkInt = resetCounter(exerciseWorkView);
+                    roundWorkInt = resetCounter(roundWorkView);
+                    saveScore(EXERCISE_WORK_STATE, exerciseWorkInt);
+                    saveScore(ROUND_WORK_STATE, exerciseWorkInt);
+                }
             }
         }
+
+
 
     }
 
