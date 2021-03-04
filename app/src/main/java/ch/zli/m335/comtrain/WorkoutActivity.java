@@ -1,7 +1,5 @@
 package ch.zli.m335.comtrain;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -12,34 +10,34 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
-
-import org.w3c.dom.Text;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-public class WorkoutActivity extends AppCompatActivity{
+public class WorkoutActivity extends MyActivty{
 
-    Intent startMainActivity;
-    Intent startPushUpActivity;
-    Intent startStepCounterActivity;
+    private SensorManager sensorManager;
+    private float mAccel;
+    private float mAccelCurrent;
+    private float mAccelLast;
 
-    Sensor sensor;
-    SensorManager sensorManager;
+    Button startWorkoutBtn;
+    Button resetBtn;
+    Button pauseBtn;
+    TextInputEditText exerciseInput;
+    TextInputEditText roundInput;
+    TextView exerciseWorkView;
+    TextView roundWorkView;
+    TextView exerciseGoalView;
+    TextView roundGoalView;
 
-    //default
     private final int exerciseDefaultGoal = 3;
     private final int roundDefaultGoal = 6;
     private int exerciseWorkInt = -11;
     private int roundWorkInt = 0;
 
-    private SensorManager mSensorManager;
-    private float mAccel;
-    private float mAccelCurrent;
-    private float mAccelLast;
 
     private boolean isPaused;
 
@@ -49,74 +47,70 @@ public class WorkoutActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout);
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        Objects.requireNonNull(mSensorManager).registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        Objects.requireNonNull(sensorManager).registerListener(mSensorListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_NORMAL);
         mAccel = 10f;
         mAccelCurrent = SensorManager.GRAVITY_EARTH;
         mAccelLast = SensorManager.GRAVITY_EARTH;
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        /**
-         * creates the Navigation and intents to change the Activity
-         */
+        exerciseInput = findViewById(R.id.exerciseInput);
+        roundInput = findViewById(R.id.roundInput);
+        startWorkoutBtn = findViewById(R.id.startWorkoutBtn);
+        resetBtn = findViewById(R.id.workoutResetBtn);
+        pauseBtn = findViewById(R.id.workoutPauseBtn);
+        exerciseWorkView = findViewById(R.id.exerciseWork);
+        roundWorkView = findViewById(R.id.roundWork);
+        exerciseGoalView = findViewById(R.id.exerciseGoal);
+        roundGoalView = findViewById(R.id.roundGoal);
+
         createNavigation();
-
-        /**
-         * gets all Items from the xml related to Exercise and Round
-         */
-        createWorkAndGoalViews();
-
+        enableResetBtnListener();
         enablePauseBtnListener();
-        // activateShakeSensor();
+
+        enableStartBtnListener(exerciseGoalView, roundGoalView);
+
     }
 
+    //from: https://www.tutorialspoint.com/how-to-detect-shake-event-in-android-app
+    private final SensorEventListener mSensorListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
 
-    public void createNavigation() {
-        startMainActivity = new Intent(this, MainActivity.class);
-        startPushUpActivity = new Intent(this, PushUpActivity.class);
-        startStepCounterActivity = new Intent(this, StepCoutnerActivity.class);
-
-        ImageView MainSvg = findViewById(R.id.MainToMain);
-        ImageView PushUpSvg = findViewById(R.id.MainToPushUp);
-        ImageView StepCounterSvg = findViewById(R.id.MainToStepCounter);
-
-        MainSvg.setOnClickListener(v -> changeActivities(startMainActivity));
-        PushUpSvg.setOnClickListener(v -> changeActivities(startPushUpActivity));
-        StepCounterSvg.setOnClickListener(v -> changeActivities(startStepCounterActivity));
+            mAccelLast = mAccelCurrent;
+            mAccelCurrent = (float) Math.sqrt((x * x + y * y + z * z));
+            float delta = mAccelCurrent - mAccelLast;
+            mAccel = mAccel * 0.9f + delta;
+            if (mAccel > 3) {
+                countUpExerciseAndRound();
+            }
+        }
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        }
+    };
+    @Override
+    protected void onResume() {
+        sensorManager.registerListener(mSensorListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL);
+        super.onResume();
+    }
+    @Override
+    protected void onPause() {
+        sensorManager.unregisterListener(mSensorListener);
+        super.onPause();
     }
 
-    public void changeActivities(Intent startactivity){
-        startActivity(startactivity);
-        finish();
-    }
-
-    public void createWorkAndGoalViews() {
-        TextView exerciseWorkView = findViewById(R.id.exerciseWork);
-        TextView roundWorkView = findViewById(R.id.roundWork);
-        TextView exerciseGoalView = findViewById(R.id.exerciseGoal);
-        TextView roundGoalView = findViewById(R.id.roundGoal);
-
-        //inputs Goals of Exercise and Round from Input Field or the default value
-        inputGoals(exerciseGoalView, roundGoalView);
-        enableResetBtnListener(exerciseWorkView, roundWorkView, exerciseGoalView, roundGoalView);
-    }
-
-    public void inputGoals(TextView exerciseGoalView, TextView roundGoalView){
-        TextInputEditText exerciseInput = findViewById(R.id.exerciseInput);
-        TextInputEditText roundInput = findViewById(R.id.roundInput);
-        Button startWorkoutBtn = findViewById(R.id.startWorkoutBtn);
-
-        startWorkoutBtn.setOnClickListener(v -> {
+    public void enableStartBtnListener(TextView exerciseGoalView, TextView roundGoalView){
+           startWorkoutBtn.setOnClickListener(v -> {
             inputGoal(exerciseGoalView, exerciseInput, exerciseDefaultGoal);
             inputGoal(roundGoalView, roundInput, roundDefaultGoal);
         });
     }
-
-
 
     public void inputGoal(TextView goalView, TextInputEditText goalInput, int defaultInt){
             if (Objects.requireNonNull(goalInput.getText()).length() > 0) {
@@ -126,96 +120,33 @@ public class WorkoutActivity extends AppCompatActivity{
             }
     }
 
-
-
-    public void enableResetBtnListener(TextView exerciseWorkView, TextView roundWorkView, TextView exerciseGoalView, TextView roundGoalView){
-        Button resetBtn = findViewById(R.id.workoutResetBtn);
+    public void enableResetBtnListener(){
         resetBtn.setOnClickListener(v -> {
-            exerciseWorkInt = resetWorkAndGoalCounter(exerciseWorkView);
-            roundWorkInt = resetWorkAndGoalCounter(roundWorkView);
+            exerciseWorkInt = resetCounter(exerciseWorkView);
+            roundWorkInt = resetCounter(roundWorkView);
 
         });
-
         resetBtn.setOnLongClickListener(v -> {
-            exerciseWorkInt = resetWorkAndGoalCounter(exerciseWorkView);
-            roundWorkInt = resetWorkAndGoalCounter(roundWorkView);
+            exerciseWorkInt = resetCounter(exerciseWorkView);
+            roundWorkInt = resetCounter(roundWorkView);
             exerciseGoalView.setText(toString(0));
             roundGoalView.setText(toString(0));
             return false;
         });
     }
 
-    public int resetWorkAndGoalCounter(TextView counterView){
-        int countInt = 0;
-        counterView.setText(toString(countInt));
-        return countInt;
-    }
-
-    public String toString(Object number) {
-        return String.valueOf(number);
-    }
-
-
-   /* public void activateShakeSensor() {
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        Objects.requireNonNull(mSensorManager).registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_NORMAL);
-        mAccel = 10f;
-        mAccelCurrent = SensorManager.GRAVITY_EARTH;
-        mAccelLast = SensorManager.GRAVITY_EARTH;
-    }*/
-
-    //from: https://www.tutorialspoint.com/how-to-detect-shake-event-in-android-app
-    private final SensorEventListener mSensorListener = new SensorEventListener() {
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            float x = event.values[0];
-            float y = event.values[1];
-            float z = event.values[2];
-            TextView exerciseWork = findViewById(R.id.exerciseWork);
-            TextView roundWork = findViewById(R.id.roundWork);
-            TextView exerciseGoal = findViewById(R.id.exerciseGoal);
-            TextView roundGoal = findViewById(R.id.roundGoal);
-            mAccelLast = mAccelCurrent;
-            mAccelCurrent = (float) Math.sqrt((x * x + y * y + z * z));
-            float delta = mAccelCurrent - mAccelLast;
-            mAccel = mAccel * 0.9f + delta;
-            if (mAccel > 3) {
-                countUpExerciseAndRound(exerciseWork, roundWork, exerciseGoal, roundGoal);
-            }
-        }
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        }
-    };
-    @Override
-    protected void onResume() {
-        mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_NORMAL);
-        super.onResume();
-    }
-    @Override
-    protected void onPause() {
-        mSensorManager.unregisterListener(mSensorListener);
-        super.onPause();
-    }
-
     /**
      * Counts up Exercise
      * if Exercise work is equal to Exercise Goal Round counts up
      * if Exercise work is equal to Exercise Goal & Round Work is equal to Round Goal everything resets to 0
-     * @param exerciseWork
-     * @param roundWork
-     * @param exerciseGoal
-     * @param roundGoal
      */
-    public void countUpExerciseAndRound(TextView exerciseWork, TextView roundWork, TextView exerciseGoal, TextView roundGoal) {
+    public void countUpExerciseAndRound() {
 
-       if (textViewtoInt(exerciseGoal) > 0 || exerciseWorkInt < 0) {
+       if (textViewtoInt(exerciseGoalView) > 0 || exerciseWorkInt < 0) {
             exerciseWorkInt++;
         }
         if (exerciseWorkInt >= 0){
-            exerciseWork.setText(toString(exerciseWorkInt));
+            exerciseWorkView.setText(toString(exerciseWorkInt));
             try {
                 onPause();
                 TimeUnit.SECONDS.sleep(1);
@@ -224,24 +155,19 @@ public class WorkoutActivity extends AppCompatActivity{
                 e.printStackTrace();
             }
         }
-        if (exerciseWorkInt == textViewtoInt(exerciseGoal) && textViewtoInt(exerciseGoal) != 0){
+        if (exerciseWorkInt == textViewtoInt(exerciseGoalView) && textViewtoInt(exerciseGoalView) != 0){
             roundWorkInt++;
-            roundWork.setText(toString(roundWorkInt));
-            exerciseWorkInt = resetWorkAndGoalCounter(exerciseWork);
-            if (roundWorkInt == textViewtoInt(roundGoal)) {
-                exerciseWorkInt = resetWorkAndGoalCounter(exerciseWork);
-                roundWorkInt = resetWorkAndGoalCounter(roundWork);
+            roundWorkView.setText(toString(roundWorkInt));
+            exerciseWorkInt = resetCounter(exerciseWorkView);
+            if (roundWorkInt == textViewtoInt(roundGoalView)) {
+                exerciseWorkInt = resetCounter(exerciseWorkView);
+                roundWorkInt = resetCounter(roundWorkView);
             }
         }
 
     }
 
-    private int textViewtoInt(TextView textView){
-        return Integer.parseInt(textView.getText().toString());
-    }
-
     public void enablePauseBtnListener() {
-        Button pauseBtn = findViewById(R.id.workoutPauseBtn);
         pauseBtn.setOnClickListener(v -> {
             isPaused = !isPaused;
             if (!isPaused) {
@@ -254,4 +180,6 @@ public class WorkoutActivity extends AppCompatActivity{
         });
 
     }
+
+
 }

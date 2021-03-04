@@ -37,7 +37,7 @@
             android:layout_weight="1" />
 
         <Button
-            android:id="@+id/pushUpResetCounterBtn"
+            android:id="@+id/pushUpResetBtn"
             android:layout_width="121dp"
             android:layout_height="58dp"
             android:layout_weight="1"
@@ -50,7 +50,7 @@
             android:layout_weight="1" />
 
         <Button
-            android:id="@+id/pauseCounterBtn"
+            android:id="@+id/pushUpPauseBtn"
             android:layout_width="121dp"
             android:layout_height="58dp"
             android:layout_weight="1"
@@ -106,48 +106,24 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/highscoreView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="47dp"
-        android:gravity="center_horizontal"
-        android:text="High score: 0"
-        android:textColor="#FFFFFF"
-        android:textSize="25dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titlePushUp" />
-
-    <TextView
-        android:id="@+id/pushupCounterView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="89dp"
-        android:text=" 0 Push ups"
-        android:textAlignment="center"
-        android:textColor="#FFF9F9"
-        android:textSize="30sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/highscoreView" />
-
     <Button
         android:id="@+id/calibratorBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="148dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginStart="136dp"
+        android:layout_marginTop="48dp"
         android:gravity="center_horizontal"
         android:text="calibrator"
         android:textSize="15dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pushupCounterView" />
+        app:layout_constraintTop_toBottomOf="@+id/pushUpCounterView" />
 
     <Button
         android:id="@+id/upCalibratorBtn"
         android:layout_width="121dp"
         android:layout_height="58dp"
-        android:layout_marginStart="57dp"
-        android:layout_marginTop="29dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="24dp"
         android:text="Up"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -157,8 +133,8 @@
         android:id="@+id/downCalibratorBtn"
         android:layout_width="121dp"
         android:layout_height="58dp"
-        android:layout_marginStart="56dp"
-        android:layout_marginTop="29dp"
+        android:layout_marginStart="72dp"
+        android:layout_marginTop="24dp"
         android:text="Down"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/upCalibratorBtn"
@@ -169,10 +145,53 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="200dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="300dp"
+        android:gravity="center|center_horizontal|center_vertical"
         android:text="0"
         android:textColor="#FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pushupCounterView" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/highscoreTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right|center_horizontal"
+            android:text="High score: "
+            android:textColor="#FFFFFF"
+            android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/highscoreView"
+            android:layout_width="62dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="0"
+            android:textColor="#FFFFFF"
+            android:textSize="25dp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/pushUpCounterView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="196dp"
+        android:layout_marginTop="52dp"
+        android:gravity="center_horizontal"
+        android:text="0"
+        android:textColor="#FFFCFC"
+        android:textSize="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

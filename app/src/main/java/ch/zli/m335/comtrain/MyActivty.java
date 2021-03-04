@@ -14,12 +14,12 @@ public abstract class MyActivty extends AppCompatActivity {
     public Intent startWorkoutActivity;
     public Intent startPushUpActivity;
 
-    public boolean isPaused = false;
     ImageView mainSvg;
     ImageView pushUpSvg;
     ImageView stepCounterSvg;
     ImageView workoutSvg;
 
+    public boolean isPaused = false;
 
     public String toString(Object number) {
         return String.valueOf(number);
@@ -30,24 +30,13 @@ public abstract class MyActivty extends AppCompatActivity {
         finish();
     }
 
+    public int textViewtoInt(TextView textView){
+        return Integer.parseInt(textView.getText().toString());
+    }
+
     public int resetCounter(TextView counterView){
         counterView.setText(toString(0));
         return 0;
-    }
-
-    public void enablePauseBtnListener() {
-        Button pauseBtn = findViewById(R.id.pauseCounterBtn);
-        pauseBtn.setOnClickListener(v -> {
-            isPaused = !isPaused;
-            if (!isPaused) {
-                onPause();
-                pauseBtn.setText("UNPAUSE");
-            } else{
-                onResume();
-                pauseBtn.setText("PAUSE");
-            }
-        });
-
     }
 
     public void renderTextView(TextView renderView, String newText) {
@@ -62,16 +51,19 @@ public abstract class MyActivty extends AppCompatActivity {
         startStepCounterActivity = new Intent(this, StepCoutnerActivity.class);
         startWorkoutActivity = new Intent(this, WorkoutActivity.class);
 
-        ImageView mainSvg = findViewById(R.id.MainToMain);
-        ImageView pushUpSvg = findViewById(R.id.MainToPushUp);
-        ImageView stepCounterSvg = findViewById(R.id.MainToStepCounter);
-        ImageView workoutSvg = findViewById(R.id.MainToWorkout);
+        mainSvg = findViewById(R.id.MainToMain);
+        pushUpSvg = findViewById(R.id.MainToPushUp);
+        stepCounterSvg = findViewById(R.id.MainToStepCounter);
+        workoutSvg = findViewById(R.id.MainToWorkout);
 
         mainSvg.setOnClickListener(v -> changeActivities(startMainActivity));
         pushUpSvg.setOnClickListener(v -> changeActivities(startPushUpActivity));
         stepCounterSvg.setOnClickListener(v -> changeActivities(startStepCounterActivity));
         workoutSvg.setOnClickListener(v -> changeActivities(startWorkoutActivity));
     }
+
+
+
 
 
 }

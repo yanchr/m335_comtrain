@@ -1,13 +1,11 @@
 package ch.zli.m335.comtrain;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -17,28 +15,28 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 public class PushUpActivity extends MyActivty implements SensorEventListener {
 
-    public SensorManager sensorManager;
-    public Sensor sensor;
+    private SensorManager sensorManager;
+    private Sensor sensor;
 
-    public Button calibratorBtn;
-    public Button upCalibratorBtn;
-    public Button resetBtn;
-    public Button downCalibratorBtn;
-    public TextView pushUpCounterView;
-    public TextView lightNumberView;
-    public TextView highscoreView;
 
-    public double downLightNumber;
-    public double upLightNumber;
-    public int pushUps;
-    public boolean wasDown = false;
-    public int highscore = 0;
+    private Button calibratorBtn;
+    private Button upCalibratorBtn;
+    private Button resetBtn;
+    private Button pauseBtn;
+    private Button downCalibratorBtn;
+    private TextView pushUpCounterView;
+    private TextView lightNumberView;
+    private TextView highscoreView;
+
+
+    private double downLightNumber;
+    private double upLightNumber;
+    private int pushUps;
+    private boolean wasDown = false;
+    private int highscore = 0;
     private static final String COUNTER_STATE = "counter";
     private SharedPreferences preferences;
 
@@ -52,7 +50,8 @@ public class PushUpActivity extends MyActivty implements SensorEventListener {
         this.downCalibratorBtn = findViewById(R.id.downCalibratorBtn);
         this.upCalibratorBtn = findViewById(R.id.upCalibratorBtn);
         this.calibratorBtn = findViewById(R.id.calibratorBtn);
-        this.resetBtn = findViewById(R.id.pushUpResetCounterBtn);
+        this.pauseBtn = findViewById(R.id.pushUpPauseBtn);
+        this.resetBtn = findViewById(R.id.pushUpResetBtn);
         this.lightNumberView = findViewById(R.id.lightNumberView);
         this.highscoreView = findViewById(R.id.highscoreView);
         this.preferences = getPreferences(MODE_PRIVATE);
@@ -82,6 +81,7 @@ public class PushUpActivity extends MyActivty implements SensorEventListener {
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         sensorManager.registerListener((SensorEventListener) this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
+
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -172,6 +172,23 @@ public class PushUpActivity extends MyActivty implements SensorEventListener {
             }
         });
     }
+
+
+
+    public void enablePauseBtnListener() {
+        pauseBtn.setOnClickListener(v -> {
+            isPaused = !isPaused;
+            if (!isPaused) {
+                onPause();
+                pauseBtn.setText("UNPAUSE");
+            } else{
+                onResume();
+                pauseBtn.setText("PAUSE");
+            }
+        });
+
+    }
+
 
 
 }

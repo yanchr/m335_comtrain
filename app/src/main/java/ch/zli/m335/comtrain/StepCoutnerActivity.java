@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class StepCoutnerActivity extends AppCompatActivity implements SensorEventListener{
+public class StepCoutnerActivity extends MyActivty implements SensorEventListener{
 
     Intent startMainActivity;
     Intent startPushUpActivity;
@@ -76,10 +76,6 @@ public class StepCoutnerActivity extends AppCompatActivity implements SensorEven
         }
     }
 
-
-    public String toString(Object number) {
-        return String.valueOf(number);
-    }
 
 
     @Override
