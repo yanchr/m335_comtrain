@@ -1,6 +1,7 @@
 package ch.zli.m335.comtrain;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,6 +19,9 @@ public abstract class MyActivty extends AppCompatActivity {
     ImageView pushUpSvg;
     ImageView stepCounterSvg;
     ImageView workoutSvg;
+
+    public SharedPreferences preferences;
+
 
     public boolean isPaused = false;
 
@@ -60,6 +64,12 @@ public abstract class MyActivty extends AppCompatActivity {
         pushUpSvg.setOnClickListener(v -> changeActivities(startPushUpActivity));
         stepCounterSvg.setOnClickListener(v -> changeActivities(startStepCounterActivity));
         workoutSvg.setOnClickListener(v -> changeActivities(startWorkoutActivity));
+    }
+
+    public void saveScore(String state, int score) {
+        SharedPreferences.Editor preferencesEditor = this.preferences.edit();
+        preferencesEditor.putInt(state, score);
+        preferencesEditor.apply();
     }
 
 
