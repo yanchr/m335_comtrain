@@ -29,16 +29,16 @@ public abstract class MyActivty extends AppCompatActivity {
         return String.valueOf(number);
     }
 
-    public void changeActivities(Intent startactivity){
+    public void changeActivities(Intent startactivity) {
         startActivity(startactivity);
         finish();
     }
 
-    public int textViewtoInt(TextView textView){
+    public int textViewtoInt(TextView textView) {
         return Integer.parseInt(textView.getText().toString());
     }
 
-    public int resetCounter(TextView counterView){
+    public int resetCounter(TextView counterView) {
         counterView.setText(toString(0));
         return 0;
     }
@@ -71,9 +71,6 @@ public abstract class MyActivty extends AppCompatActivity {
         preferencesEditor.putInt(state, score);
         preferencesEditor.apply();
     }
-
-
-
 
 
 }

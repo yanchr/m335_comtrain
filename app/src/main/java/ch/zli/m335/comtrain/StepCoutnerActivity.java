@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -13,7 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class StepCoutnerActivity extends MyActivty implements SensorEventListener{
+public class StepCoutnerActivity extends MyActivty implements SensorEventListener {
 
     private SensorManager sensorManager;
     private Sensor sensor;
@@ -29,17 +30,17 @@ public class StepCoutnerActivity extends MyActivty implements SensorEventListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step_coutner);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-       shakerBtn = findViewById(R.id.shakerBtn);
-       stepCounterView = findViewById(R.id.stepCounterView);
-       pauseBtn = findViewById(R.id.stepCounterPauseBtn);
-       resetBtn = findViewById(R.id.stepCounterResetBtn);
+        shakerBtn = findViewById(R.id.shakerBtn);
+        stepCounterView = findViewById(R.id.stepCounterView);
+        pauseBtn = findViewById(R.id.stepCounterPauseBtn);
+        resetBtn = findViewById(R.id.stepCounterResetBtn);
 
-       activateStepSensor();
-       createNavigation();
-       enableResetBtnListener();
-       enablePauseBtnListener();
-
+        activateStepSensor();
+        createNavigation();
+        enableResetBtnListener();
+        enablePauseBtnListener();
 
 
         shakerBtn.setOnClickListener(v -> {
@@ -60,7 +61,7 @@ public class StepCoutnerActivity extends MyActivty implements SensorEventListene
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (sensor.getType() == Sensor.TYPE_STEP_COUNTER){
+        if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
 
             stepCounterInt++;
             stepCounterView.setText(toString(stepCounterInt));
@@ -101,7 +102,7 @@ public class StepCoutnerActivity extends MyActivty implements SensorEventListene
             if (!isPaused) {
                 onPause();
                 pauseBtn.setText("UNPAUSE");
-            } else{
+            } else {
                 onResume();
                 pauseBtn.setText("PAUSE");
             }

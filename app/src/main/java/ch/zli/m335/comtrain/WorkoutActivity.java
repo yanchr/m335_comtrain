@@ -2,6 +2,7 @@ package ch.zli.m335.comtrain;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -18,7 +19,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-public class WorkoutActivity extends MyActivty{
+public class WorkoutActivity extends MyActivty {
 
     private SensorManager sensorManager;
     private float mAccel;
@@ -56,6 +57,7 @@ public class WorkoutActivity extends MyActivty{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         Objects.requireNonNull(sensorManager).registerListener(mSensorListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
@@ -124,16 +126,19 @@ public class WorkoutActivity extends MyActivty{
                 countUpExerciseAndRound();
             }
         }
+
         @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
         }
     };
+
     @Override
     protected void onResume() {
         sensorManager.registerListener(mSensorListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_NORMAL);
         super.onResume();
     }
+
     @Override
     protected void onPause() {
         sensorManager.unregisterListener(mSensorListener);
@@ -149,27 +154,27 @@ public class WorkoutActivity extends MyActivty{
         super.onSaveInstanceState(outState);
     }
 
-    public void enableStartBtnListener(){
-           startWorkoutBtn.setOnClickListener(v -> {
+    public void enableStartBtnListener() {
+        startWorkoutBtn.setOnClickListener(v -> {
             exerciseGoalInt = inputGoal(exerciseGoalView, exerciseInput, exerciseDefaultGoal);
             roundGoalInt = inputGoal(roundGoalView, roundInput, roundDefaultGoal);
-               saveScore(EXERCISE_GOAL_STATE, exerciseGoalInt);
-               saveScore(ROUND_GOAL_STATE, roundGoalInt);
+            saveScore(EXERCISE_GOAL_STATE, exerciseGoalInt);
+            saveScore(ROUND_GOAL_STATE, roundGoalInt);
 
-           });
+        });
     }
 
-    public int inputGoal(TextView goalView, TextInputEditText goalInput, int defaultInt){
-            if (Objects.requireNonNull(goalInput.getText()).length() > 0) {
-                goalView.setText(toString(goalInput.getText()));
-                return textViewtoInt(goalInput);
-            } else {
-                goalView.setText(toString(defaultInt));
-                return defaultInt;
-            }
+    public int inputGoal(TextView goalView, TextInputEditText goalInput, int defaultInt) {
+        if (Objects.requireNonNull(goalInput.getText()).length() > 0) {
+            goalView.setText(toString(goalInput.getText()));
+            return textViewtoInt(goalInput);
+        } else {
+            goalView.setText(toString(defaultInt));
+            return defaultInt;
+        }
     }
 
-    public void enableResetBtnListener(){
+    public void enableResetBtnListener() {
         resetBtn.setOnClickListener(v -> {
             exerciseWorkInt = resetCounter(exerciseWorkView);
             roundWorkInt = resetCounter(roundWorkView);
@@ -197,13 +202,13 @@ public class WorkoutActivity extends MyActivty{
      */
     public void countUpExerciseAndRound() {
 
-        if (preshaker < 0){
+        if (preshaker < 0) {
             preshaker++;
         } else {
             if (textViewtoInt(exerciseGoalView) > 0 || exerciseWorkInt < 0) {
                 exerciseWorkInt++;
             }
-            if (exerciseWorkInt >= 0){
+            if (exerciseWorkInt >= 0) {
                 exerciseWorkView.setText(toString(exerciseWorkInt));
                 saveScore(EXERCISE_WORK_STATE, exerciseWorkInt);
                 try {
@@ -214,7 +219,7 @@ public class WorkoutActivity extends MyActivty{
                     e.printStackTrace();
                 }
             }
-            if (exerciseWorkInt == textViewtoInt(exerciseGoalView) && textViewtoInt(exerciseGoalView) != 0){
+            if (exerciseWorkInt == textViewtoInt(exerciseGoalView) && textViewtoInt(exerciseGoalView) != 0) {
                 roundWorkInt++;
                 roundWorkView.setText(toString(roundWorkInt));
                 saveScore(ROUND_WORK_STATE, roundWorkInt);
@@ -230,7 +235,6 @@ public class WorkoutActivity extends MyActivty{
         }
 
 
-
     }
 
     public void enablePauseBtnListener() {
@@ -239,7 +243,7 @@ public class WorkoutActivity extends MyActivty{
             if (!isPaused) {
                 onPause();
                 pauseBtn.setText("UNPAUSE");
-            } else{
+            } else {
                 onResume();
                 pauseBtn.setText("PAUSE");
             }
