@@ -131,22 +131,22 @@ public class WorkoutActivity extends AppCompatActivity{
     public void enableResetBtnListener(TextView exerciseWorkView, TextView roundWorkView, TextView exerciseGoalView, TextView roundGoalView){
         Button resetBtn = findViewById(R.id.workoutResetBtn);
         resetBtn.setOnClickListener(v -> {
-            exerciseWorkInt = resetWorkAndGoalCounter(exerciseWorkView, exerciseWorkInt);
-            roundWorkInt = resetWorkAndGoalCounter(roundWorkView, roundWorkInt);
+            exerciseWorkInt = resetWorkAndGoalCounter(exerciseWorkView);
+            roundWorkInt = resetWorkAndGoalCounter(roundWorkView);
 
         });
 
         resetBtn.setOnLongClickListener(v -> {
-            exerciseWorkInt = resetWorkAndGoalCounter(exerciseWorkView, exerciseWorkInt);
-            roundWorkInt = resetWorkAndGoalCounter(roundWorkView, roundWorkInt);
+            exerciseWorkInt = resetWorkAndGoalCounter(exerciseWorkView);
+            roundWorkInt = resetWorkAndGoalCounter(roundWorkView);
             exerciseGoalView.setText(toString(0));
             roundGoalView.setText(toString(0));
             return false;
         });
     }
 
-    public int resetWorkAndGoalCounter(TextView counterView, int countInt){
-        countInt = 0;
+    public int resetWorkAndGoalCounter(TextView counterView){
+        int countInt = 0;
         counterView.setText(toString(countInt));
         return countInt;
     }
@@ -227,10 +227,10 @@ public class WorkoutActivity extends AppCompatActivity{
         if (exerciseWorkInt == textViewtoInt(exerciseGoal) && textViewtoInt(exerciseGoal) != 0){
             roundWorkInt++;
             roundWork.setText(toString(roundWorkInt));
-            exerciseWorkInt = resetWorkAndGoalCounter(exerciseWork, exerciseWorkInt);
+            exerciseWorkInt = resetWorkAndGoalCounter(exerciseWork);
             if (roundWorkInt == textViewtoInt(roundGoal)) {
-                exerciseWorkInt = resetWorkAndGoalCounter(exerciseWork, exerciseWorkInt);
-                roundWorkInt = resetWorkAndGoalCounter(roundWork, roundWorkInt);
+                exerciseWorkInt = resetWorkAndGoalCounter(exerciseWork);
+                roundWorkInt = resetWorkAndGoalCounter(roundWork);
             }
         }
 
