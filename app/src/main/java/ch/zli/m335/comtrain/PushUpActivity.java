@@ -23,16 +23,9 @@ import org.w3c.dom.Text;
 
 public class PushUpActivity extends MyActivty implements SensorEventListener {
 
-    public Intent startMainActivity;
-    public Intent startStepCounterActivity;
-    public Intent startWorkoutActivity;
-
     public SensorManager sensorManager;
     public Sensor sensor;
 
-    public ImageView MainSvg;
-    public ImageView StepCounterSvg ;
-    public ImageView WorkoutSvg;
     public Button calibratorBtn;
     public Button upCalibratorBtn;
     public Button resetBtn;
@@ -55,13 +48,6 @@ public class PushUpActivity extends MyActivty implements SensorEventListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_push_up);
 
-        startMainActivity = new Intent(this, MainActivity.class);
-        startStepCounterActivity = new Intent(this, StepCoutnerActivity.class);
-        startWorkoutActivity = new Intent(this, WorkoutActivity.class);
-
-        this.MainSvg = findViewById(R.id.MainToMain);
-        this.StepCounterSvg = findViewById(R.id.MainToStepCounter);
-        this.WorkoutSvg = findViewById(R.id.MainToWorkout);
         this.pushUpCounterView = findViewById(R.id.pushUpCounterView);
         this.downCalibratorBtn = findViewById(R.id.downCalibratorBtn);
         this.upCalibratorBtn = findViewById(R.id.upCalibratorBtn);
@@ -72,6 +58,10 @@ public class PushUpActivity extends MyActivty implements SensorEventListener {
         this.preferences = getPreferences(MODE_PRIVATE);
 
         activateLightSensor();
+        createNavigation();
+        enableResetBtnListener();
+        enablePauseBtnListener();
+        enableCalibratorBtnListener();
 
 
         // Preserve UI state
@@ -86,29 +76,6 @@ public class PushUpActivity extends MyActivty implements SensorEventListener {
         saveHighScore();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        enableResetBtnListener();
-        enablePauseBtnListener();
-
-        MainSvg.setOnClickListener(v -> changeActivities(startMainActivity));
-        StepCounterSvg.setOnClickListener(v -> changeActivities(startStepCounterActivity));
-        WorkoutSvg.setOnClickListener(v -> changeActivities(startWorkoutActivity));
-
-        upCalibratorBtn.setVisibility(View.INVISIBLE);
-        downCalibratorBtn.setVisibility(View.INVISIBLE);
-
-        calibratorBtn.setOnClickListener(v -> {
-            if (upCalibratorBtn.getVisibility() == View.INVISIBLE) {
-                upCalibratorBtn.setVisibility(View.VISIBLE);
-                downCalibratorBtn.setVisibility(View.VISIBLE);
-            } else {
-                upCalibratorBtn.setVisibility(View.INVISIBLE);
-                downCalibratorBtn.setVisibility(View.INVISIBLE);
-            }
-        });
-    }
 
     public void activateLightSensor() {
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -190,5 +157,21 @@ public class PushUpActivity extends MyActivty implements SensorEventListener {
             return false;
         });
     }
+
+    protected void enableCalibratorBtnListener(){
+        upCalibratorBtn.setVisibility(View.INVISIBLE);
+        downCalibratorBtn.setVisibility(View.INVISIBLE);
+
+        calibratorBtn.setOnClickListener(v -> {
+            if (upCalibratorBtn.getVisibility() == View.INVISIBLE) {
+                upCalibratorBtn.setVisibility(View.VISIBLE);
+                downCalibratorBtn.setVisibility(View.VISIBLE);
+            } else {
+                upCalibratorBtn.setVisibility(View.INVISIBLE);
+                downCalibratorBtn.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
 
 }

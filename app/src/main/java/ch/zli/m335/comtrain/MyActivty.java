@@ -2,13 +2,23 @@ package ch.zli.m335.comtrain;
 
 import android.content.Intent;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public abstract class MyActivty extends AppCompatActivity {
 
-    boolean isPaused = false;
+    public Intent startMainActivity;
+    public Intent startStepCounterActivity;
+    public Intent startWorkoutActivity;
+    public Intent startPushUpActivity;
+
+    public boolean isPaused = false;
+    ImageView mainSvg;
+    ImageView pushUpSvg;
+    ImageView stepCounterSvg;
+    ImageView workoutSvg;
 
 
     public String toString(Object number) {
@@ -45,5 +55,23 @@ public abstract class MyActivty extends AppCompatActivity {
             renderView.setText(newText);
         }
     }
+
+    public void createNavigation() {
+        startMainActivity = new Intent(this, MainActivity.class);
+        startPushUpActivity = new Intent(this, PushUpActivity.class);
+        startStepCounterActivity = new Intent(this, StepCoutnerActivity.class);
+        startWorkoutActivity = new Intent(this, WorkoutActivity.class);
+
+        ImageView mainSvg = findViewById(R.id.MainToMain);
+        ImageView pushUpSvg = findViewById(R.id.MainToPushUp);
+        ImageView stepCounterSvg = findViewById(R.id.MainToStepCounter);
+        ImageView workoutSvg = findViewById(R.id.MainToWorkout);
+
+        mainSvg.setOnClickListener(v -> changeActivities(startMainActivity));
+        pushUpSvg.setOnClickListener(v -> changeActivities(startPushUpActivity));
+        stepCounterSvg.setOnClickListener(v -> changeActivities(startStepCounterActivity));
+        workoutSvg.setOnClickListener(v -> changeActivities(startWorkoutActivity));
+    }
+
 
 }
