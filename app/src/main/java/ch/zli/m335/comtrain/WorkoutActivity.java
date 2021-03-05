@@ -60,7 +60,7 @@ public class WorkoutActivity extends MyActivty {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        Objects.requireNonNull(sensorManager).registerListener(mSensorListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+        Objects.requireNonNull(sensorManager).registerListener(shakeDetector, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_NORMAL);
         mAccel = 10f;
         mAccelCurrent = SensorManager.GRAVITY_EARTH;
@@ -111,7 +111,7 @@ public class WorkoutActivity extends MyActivty {
     }
 
     //from: https://www.tutorialspoint.com/how-to-detect-shake-event-in-android-app
-    private final SensorEventListener mSensorListener = new SensorEventListener() {
+    private final SensorEventListener shakeDetector = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
             float x = event.values[0];
@@ -134,14 +134,14 @@ public class WorkoutActivity extends MyActivty {
 
     @Override
     protected void onResume() {
-        sensorManager.registerListener(mSensorListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+        sensorManager.registerListener(shakeDetector, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_NORMAL);
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        sensorManager.unregisterListener(mSensorListener);
+        sensorManager.unregisterListener(shakeDetector);
         super.onPause();
     }
 

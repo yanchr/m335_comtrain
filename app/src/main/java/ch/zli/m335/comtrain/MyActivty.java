@@ -22,6 +22,7 @@ public abstract class MyActivty extends AppCompatActivity {
 
     public SharedPreferences preferences;
 
+    public static int abstractSteps = 0;
 
     public boolean isPaused = false;
 
